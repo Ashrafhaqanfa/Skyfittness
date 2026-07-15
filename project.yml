@@ -1,6 +1,6 @@
 name: GymApp
 options:
-  bundleIdPrefix: com.yourname   # change 'yourname' to match what you used in Firebase
+  bundleIdPrefix: com.Skyfittness   # change 'yourname' to match what you used in Firebase
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
@@ -40,7 +40,7 @@ targets:
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.gymapp   # must exactly match Firebase + Codemagic
+        PRODUCT_BUNDLE_IDENTIFIER: com.Skyfittness.gymapp   # must exactly match Firebase + Codemagic
         INFOPLIST_KEY_UILaunchScreen_Generation: true
         TARGETED_DEVICE_FAMILY: "1"   # iPhone only; use "1,2" for iPhone+iPad
     dependencies:
