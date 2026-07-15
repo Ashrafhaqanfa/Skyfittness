@@ -7,7 +7,7 @@ workflows:
       # Set these in Codemagic dashboard under App settings > Environment variables
       # (never commit real API keys/certs into this file)
       vars:
-        BUNDLE_ID: "com.yourname.gymapp"   # <-- change to your real bundle ID
+        BUNDLE_ID: "com.Skyfittness.gymapp"   # <-- change to your real bundle ID
         XCODE_WORKSPACE: "GymApp.xcodeproj"
         XCODE_SCHEME: "GymApp"
       xcode: latest
