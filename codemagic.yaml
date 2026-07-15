@@ -1,0 +1,61 @@
+workflows:
+  gym-app-ios-workflow:
+    name: GymApp iOS Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      # Set these in Codemagic dashboard under App settings > Environment variables
+      # (never commit real API keys/certs into this file)
+      vars:
+        BUNDLE_ID: "com.yourname.gymapp"   # <-- change to your real bundle ID
+        XCODE_WORKSPACE: "GymApp.xcodeproj"
+        XCODE_SCHEME: "GymApp"
+      xcode: latest
+      cocoapods: default
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+
+    scripts:
+      - name: Install XcodeGen (generates the .xcodeproj from project.yml)
+        script: |
+          brew install xcodegen
+
+      - name: Generate Xcode project from project.yml
+        script: |
+          xcodegen generate
+          # This one command does everything the "Add Firebase SDK" screen in the
+          # Firebase console asked you to click through manually in Xcode —
+          # it reads project.yml and creates a real .xcodeproj with the Firebase
+          # Swift Package dependency already attached.
+
+      - name: Resolve Swift Package dependencies
+        script: |
+          xcodebuild -resolvePackageDependencies -project "$XCODE_WORKSPACE"
+
+      - name: Build the app
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      # Uncomment and configure once you have App Store Connect API keys set up
+      # app_store_connect:
+      #   auth: integration
+      #   submit_to_testflight: true
+
+      email:
+        recipients:
+          - your-email@example.com   # <-- get a notification when the build finishes
+        notify:
+          success: true
+          failure: true

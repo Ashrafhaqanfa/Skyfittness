@@ -1,0 +1,58 @@
+name: GymApp
+options:
+  bundleIdPrefix: com.yourname   # change 'yourname' to match what you used in Firebase
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: 5.0
+    DEVELOPMENT_TEAM: ""   # Codemagic fills this in automatically via automatic signing
+
+packages:
+  # This ONE block replaces the entire "Add Firebase SDK" screen you were looking at.
+  # Instead of clicking through Xcode's UI, we declare the same dependency here as text.
+  FirebaseSDK:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 10.0.0
+
+targets:
+  GymApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: GymApp
+        excludes:
+          - "**/*.md"
+    resources:
+      - path: GymApp/GoogleService-Info.plist
+        optional: true   # so project generation doesn't fail before you've added the real file
+    info:
+      path: GymApp/Info.plist
+      properties:
+        UILaunchStoryboardName: ""
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.gymapp   # must exactly match Firebase + Codemagic
+        INFOPLIST_KEY_UILaunchScreen_Generation: true
+        TARGETED_DEVICE_FAMILY: "1"   # iPhone only; use "1,2" for iPhone+iPad
+    dependencies:
+      # These are the exact same libraries the "Add Firebase SDK" screen asked you to
+      # tick checkboxes for — here they're just lines in a text file instead.
+      - package: FirebaseSDK
+        product: FirebaseAuth
+      - package: FirebaseSDK
+        product: FirebaseFirestore
+      - package: FirebaseSDK
+        product: FirebaseFirestoreSwift
+      - package: FirebaseSDK
+        product: FirebaseFunctions
+      - package: FirebaseSDK
+        product: FirebaseMessaging

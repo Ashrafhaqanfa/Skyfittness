@@ -1,0 +1,14 @@
+{
+  "name": "gymapp-functions",
+  "description": "Cloud Functions for GymApp: scheduled reminders (SMS/WhatsApp) and staff account creation",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "twilio": "^5.0.0"
+  },
+  "private": true
+}
