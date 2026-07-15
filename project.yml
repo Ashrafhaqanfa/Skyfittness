@@ -23,9 +23,14 @@ targets:
     platform: iOS
     deploymentTarget: "16.0"
     sources:
-      - path: GymApp
+      - path: .
         excludes:
           - "**/*.md"
+          - "functions/**"
+          - "project.yml"
+          - "codemagic.yaml"
+          - ".gitignore"
+          - "GymApp.xcodeproj/**"
     resources:
       - path: GymApp/GoogleService-Info.plist
         optional: true   # so project generation doesn't fail before you've added the real file
