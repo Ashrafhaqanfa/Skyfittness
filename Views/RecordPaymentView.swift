@@ -27,7 +27,7 @@ struct RecordPaymentView: View {
             Form {
                 Section {
                     LabeledContent("Member", value: member.name)
-                    LabeledContent("Current due", value: "₹\(member.dueAmount, specifier: "%.2f")")
+                    LabeledContent("Current due", value: "₹\(String(format: "%.2f", member.dueAmount))")
                 }
 
                 Section("Payment") {
