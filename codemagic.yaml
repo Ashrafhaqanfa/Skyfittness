@@ -28,14 +28,16 @@ workflows:
         script: |
           xcodebuild -resolvePackageDependencies -project "$XCODE_WORKSPACE"
 
-      - name: Build for iOS Simulator (no signing required)
+      - name: Build for iOS Simulator (local ad-hoc signing)
         script: |
           xcodebuild build \
             -project "$XCODE_WORKSPACE" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=YES \
             -derivedDataPath build/DerivedData
 
       - name: Zip the .app for download
