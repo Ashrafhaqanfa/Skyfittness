@@ -97,8 +97,8 @@ struct AddEditMemberView: View {
                 loadExistingIfNeeded()
             }
             .onDisappear { categoryPlanService.stopListening() }
-            .onChange(of: selectedPlanId) { _, newPlanId in
-                // Auto-calculate expiry date from the plan's duration, from join date
+            .onChange(of: selectedPlanId) { newPlanId in
+               // Auto-calculate expiry date from the plan's duration, from join date
                 if let plan = categoryPlanService.plans.first(where: { $0.id == newPlanId }) {
                     expiryDate = Calendar.current.date(byAdding: .day, value: plan.durationDays, to: joinDate) ?? expiryDate
                     dueAmount = String(format: "%.0f", plan.price)
