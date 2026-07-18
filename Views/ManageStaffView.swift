@@ -15,11 +15,16 @@ struct ManageStaffView: View {
     var body: some View {
         Group {
             if authService.currentAdmin?.role != .owner {
-                ContentUnavailableView(
-                    "Owner access required",
-                    systemImage: "lock.fill",
-                    description: Text("Only the gym owner account can manage staff access.")
-                )
+                VStack(spacing: 12) {
+    Image(systemName: "PUT_THE_EXISTING_ICON_NAME_HERE")
+        .font(.system(size: 48))
+        .foregroundColor(.secondary)
+    Text("PUT_THE_EXISTING_TITLE_HERE")
+        .font(.headline)
+    Text("PUT_THE_EXISTING_DESCRIPTION_HERE")
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+}
             } else {
                 List {
                     ForEach(adminService.admins) { admin in
