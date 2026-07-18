@@ -36,7 +36,7 @@ struct MemberDetailView: View {
             }
 
             Section("Billing") {
-                LabeledContent("Due amount", value: "₹\(member.dueAmount, specifier: "%.2f")")
+                LabeledContent("Due amount", value: "₹\(String(format: "%.2f", member.dueAmount))")
                 Button("Record Payment") {
                     showingRecordPayment = true
                 }
