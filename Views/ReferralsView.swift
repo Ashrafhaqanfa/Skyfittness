@@ -68,7 +68,7 @@ struct ReferralsView: View {
     }
 
     private func statusBadge(_ status: Referral.RewardStatus) -> some View {
-        let color: Color = status == .rewardGiven ? .green : status == .referredJoined ? .orange : .blue
+        let color: Color = status == .rewarded ? .green : status == .converted ? .orange : .blue
         return Text(status.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
             .font(.caption2.weight(.semibold))
             .padding(.horizontal, 8).padding(.vertical, 3)
