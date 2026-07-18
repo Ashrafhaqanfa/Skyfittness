@@ -8,20 +8,6 @@
 import Foundation
 import FirebaseFirestore
 
-struct Referral: Identifiable, Codable {
-    @DocumentID var id: String?
-    var referrerMemberId: String
-    var referredName: String
-    var referredPhone: String
-    var rewardStatus: RewardStatus = .pending
-    var createdAt: Date = Date()
-
-    enum RewardStatus: String, Codable, CaseIterable {
-        case pending
-        case referredJoined = "referred_joined"
-        case rewardGiven = "reward_given"
-    }
-}
 
 @MainActor
 final class ReferralService: ObservableObject {
