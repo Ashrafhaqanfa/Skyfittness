@@ -36,7 +36,7 @@ struct DashboardView: View {
                     if !memberService.todaysAnniversaries.isEmpty {
                         InfoRow(icon: "star.fill", color: .purple, text: "\(memberService.todaysAnniversaries.count) membership anniversary(ies) today")
                     }
-                    InfoRow(icon: "indianrupeesign.circle.fill", color: .green, text: "Today's collection: ₹\(paymentService.todaysCollection, specifier: "%.0f")")
+                        InfoRow(icon: "indianrupeesign.circle.fill", color: .green, text: "Today's collection: ₹\(String(format: "%.0f", paymentService.todaysCollection))")
                     NavigationLink(destination: EnquiriesView()) {
                         InfoRow(icon: "clock.fill", color: .blue, text: "Follow-ups due today: \(enquiryService.todaysFollowUps.count)")
                     }
