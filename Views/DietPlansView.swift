@@ -13,7 +13,17 @@ struct DietPlansView: View {
     var body: some View {
         List {
             if dietPlanService.dietPlans.isEmpty {
-                ContentUnavailableView("No diet plans assigned", systemImage: "fork.knife", description: Text("Tap + to assign one."))
+                VStack(spacing: 12) {
+    Image(systemName: "fork.knife")
+        .font(.system(size: 48))
+        .foregroundColor(.secondary)
+    Text("No diet plans assigned")
+        .font(.headline)
+    Text("Tap + to assign one.")
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+}
+                                       
             } else {
                 ForEach(dietPlanService.dietPlans) { plan in
                     VStack(alignment: .leading, spacing: 4) {
