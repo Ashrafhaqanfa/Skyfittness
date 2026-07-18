@@ -20,7 +20,7 @@ struct LoginView: View {
 
                 Image(systemName: "figure.strengthtraining.traditional")
                     .font(.system(size: 60))
-                    .foregroundStyle(.accent)
+                    .foregroundStyle(Color.accentColor)
 
                 Text("Gym Manager")
                     .font(.largeTitle.bold())
