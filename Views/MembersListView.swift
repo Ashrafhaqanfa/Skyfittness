@@ -62,11 +62,16 @@ struct MembersListView: View {
                     Spacer()
                 } else if filteredMembers.isEmpty {
                     Spacer()
-                    ContentUnavailableView(
-                        "No members here",
-                        systemImage: "person.crop.circle.badge.questionmark",
-                        description: Text("Try a different filter or add a new member.")
-                    )
+                    VStack(spacing: 12) {
+    Image(systemName: "PUT_EXISTING_ICON_NAME_HERE")
+        .font(.system(size: 48))
+        .foregroundColor(.secondary)
+    Text("PUT_EXISTING_TITLE_HERE")
+        .font(.headline)
+    Text("PUT_EXISTING_DESCRIPTION_HERE")
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+}
                     Spacer()
                 } else {
                     List(filteredMembers) { member in
