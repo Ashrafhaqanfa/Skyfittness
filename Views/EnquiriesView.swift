@@ -44,7 +44,16 @@ struct EnquiriesView: View {
 
                 if filtered.isEmpty {
                     Spacer()
-                    ContentUnavailableView("No enquiries", systemImage: "person.badge.plus", description: Text("Tap + to add a new lead."))
+                    VStack(spacing: 12) {
+    Image(systemName: "person.badge.plus")
+        .font(.system(size: 48))
+        .foregroundColor(.secondary)
+    Text("No enquiries")
+        .font(.headline)
+    Text("Tap + to add a new lead.")
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+}
                     Spacer()
                 } else {
                     List(filtered) { enquiry in
