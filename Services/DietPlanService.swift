@@ -6,14 +6,7 @@
 import Foundation
 import FirebaseFirestore
 
-struct DietPlan: Identifiable, Codable {
-    @DocumentID var id: String?
-    var memberId: String
-    var title: String
-    var planDetails: String
-    var assignedBy: String?
-    var assignedDate: Date = Date()
-}
+
 
 @MainActor
 final class DietPlanService: ObservableObject {
