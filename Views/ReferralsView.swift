@@ -13,7 +13,16 @@ struct ReferralsView: View {
     var body: some View {
         List {
             if referralService.referrals.isEmpty {
-                ContentUnavailableView("No referrals yet", systemImage: "gift", description: Text("Tap + to log a member's referral."))
+               VStack(spacing: 12) {
+    Image(systemName: "gift")
+        .font(.system(size: 48))
+        .foregroundColor(.secondary)
+    Text("No referrals yet")
+        .font(.headline)
+    Text("Tap + to log a member's referral.")
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+}
             } else {
                 ForEach(referralService.referrals) { referral in
                     VStack(alignment: .leading, spacing: 6) {
@@ -29,7 +38,7 @@ struct ReferralsView: View {
                             .font(.caption2)
                             .foregroundStyle(.secondary)
 
-                        if referral.rewardStatus != .rewardGiven {
+                        if referral.rewardStatus != .rewarded  {
                             Menu("Update status") {
                                 ForEach(Referral.RewardStatus.allCases, id: \.self) { status in
                                     Button(status.rawValue.replacingOccurrences(of: "_", with: " ").capitalized) {
