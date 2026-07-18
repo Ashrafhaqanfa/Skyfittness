@@ -51,7 +51,7 @@ struct DashboardView: View {
                 enquiryService.startListening()
                 Task { await notificationService.requestPermission() }
             }
-            .onChange(of: memberService.members) { _, newMembers in
+             .onChange(of: memberService.members) { newMembers in
                 notificationService.scheduleReminders(for: newMembers)
             }
             .onDisappear {
