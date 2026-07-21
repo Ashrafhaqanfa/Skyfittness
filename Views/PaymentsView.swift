@@ -12,6 +12,10 @@ struct PaymentsView: View {
     @StateObject private var memberService = MemberService()
     @State private var selectedMonth = Calendar.current.component(.month, from: Date())
     @State private var selectedYear = Calendar.current.component(.year, from: Date())
+    @State private var selectedDate = Date()
+    @State private var gymName = "My Gym"
+    @State private var generatedPDFURL: URL?
+    @State private var showingShareSheet = false
 
     private let months = Calendar.current.monthSymbols
 
@@ -52,6 +56,37 @@ struct PaymentsView: View {
                     Text("Monthly Filter")
                 }
 
+                Section {
+                    DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
+
+                    HStack {
+                        Text("Total collected on this day")
+                        Spacer()
+                        Text("₹\(paymentService.totalCollection(on: selectedDate), specifier: "%.0f")")
+                            .fontWeight(.semibold)
+                    }
+
+                    if paymentsForSelectedDate.isEmpty {
+                        Text("No payments recorded on \(selectedDate.formatted(date: .abbreviated, time: .omitted))")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(paymentsForSelectedDate) { payment in
+                            PaymentRow(payment: payment, memberName: memberName(for: payment.memberId))
+                        }
+                    }
+
+                    Button {
+                        downloadDailyBalanceSheet()
+                    } label: {
+                        Label("Download Balance Sheet for this day", systemImage: "square.and.arrow.down.fill")
+                    }
+                } header: {
+                    Text("Payments by Date")
+                } footer: {
+                    Text("Pick any day above to see just that day's payments and download a PDF balance sheet for it.")
+                }
+
                 Section("Recent Payments (Balance Sheet)") {
                     if paymentService.payments.isEmpty {
                         Text("No payments recorded yet").foregroundStyle(.secondary)
@@ -63,6 +98,11 @@ struct PaymentsView: View {
                 }
             }
             .navigationTitle("Payments")
+            .sheet(isPresented: $showingShareSheet) {
+                if let url = generatedPDFURL {
+                    ShareSheet(items: [url])
+                }
+            }
             .onAppear {
                 paymentService.startListening()
                 memberService.startListening()
@@ -74,12 +114,26 @@ struct PaymentsView: View {
         }
     }
 
+    private var paymentsForSelectedDate: [Payment] {
+        paymentService.payments(on: selectedDate)
+    }
+
     private var totalDue: Double {
         memberService.members.reduce(0) { $0 + $1.dueAmount }
     }
 
     private func memberName(for id: String) -> String {
         memberService.members.first(where: { $0.id == id })?.name ?? "Unknown member"
+    }
+
+    private func downloadDailyBalanceSheet() {
+        generatedPDFURL = ReportService.generateDailyBalanceSheetPDF(
+            gymName: gymName,
+            members: memberService.members,
+            payments: paymentService.payments,
+            date: selectedDate
+        )
+        if generatedPDFURL != nil { showingShareSheet = true }
     }
 }
 
