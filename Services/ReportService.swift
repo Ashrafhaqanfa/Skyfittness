@@ -19,21 +19,64 @@ enum ReportService {
         month: Int,
         year: Int
     ) -> URL? {
+        let monthName = Calendar.current.monthSymbols[month - 1]
+        let filteredPayments = payments.filter {
+            let cal = Calendar.current
+            return cal.component(.month, from: $0.paymentDate) == month &&
+                   cal.component(.year, from: $0.paymentDate) == year
+        }
+        return renderBalanceSheetPDF(
+            gymName: gymName,
+            members: members,
+            payments: filteredPayments,
+            periodTitle: "\(monthName) \(year)",
+            totalsLabel: "Total Collected This Month",
+            emptyMessage: "No payments recorded for this month.",
+            filename: "BalanceSheet-\(monthName)-\(year).pdf"
+        )
+    }
+
+    /// Same report, but scoped to a single calendar day — for "download balance sheet for the day".
+    static func generateDailyBalanceSheetPDF(
+        gymName: String,
+        members: [Member],
+        payments: [Payment],
+        date: Date
+    ) -> URL? {
+        let cal = Calendar.current
+        let filteredPayments = payments.filter { cal.isDate($0.paymentDate, inSameDayAs: date) }
+        let dayString = date.formatted(date: .abbreviated, time: .omitted)
+        let fileDateString = date.formatted(.iso8601.year().month().day())
+        return renderBalanceSheetPDF(
+            gymName: gymName,
+            members: members,
+            payments: filteredPayments,
+            periodTitle: dayString,
+            totalsLabel: "Total Collected on \(dayString)",
+            emptyMessage: "No payments recorded for this day.",
+            filename: "BalanceSheet-\(fileDateString).pdf"
+        )
+    }
+
+    // MARK: - Shared renderer
+
+    private static func renderBalanceSheetPDF(
+        gymName: String,
+        members: [Member],
+        payments: [Payment],
+        periodTitle: String,
+        totalsLabel: String,
+        emptyMessage: String,
+        filename: String
+    ) -> URL? {
         let pageWidth: CGFloat = 612
         let pageHeight: CGFloat = 792
         let pageRect = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
         let renderer = UIGraphicsPDFRenderer(bounds: pageRect)
 
-        let monthName = Calendar.current.monthSymbols[month - 1]
-        let filename = "BalanceSheet-\(monthName)-\(year).pdf"
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
 
-        let monthlyPayments = payments.filter {
-            let cal = Calendar.current
-            return cal.component(.month, from: $0.paymentDate) == month &&
-                   cal.component(.year, from: $0.paymentDate) == year
-        }
-        let totalCollected = monthlyPayments.reduce(0) { $0 + $1.amount }
+        let totalCollected = payments.reduce(0) { $0 + $1.amount }
         let totalDue = members.reduce(0) { $0 + $1.dueAmount }
 
         do {
@@ -49,13 +92,13 @@ enum ReportService {
                 y += 32
 
                 let subtitleFont = UIFont.systemFont(ofSize: 14)
-                "\(monthName) \(year)".draw(at: CGPoint(x: 40, y: y), withAttributes: [.font: subtitleFont, .foregroundColor: UIColor.darkGray])
+                periodTitle.draw(at: CGPoint(x: 40, y: y), withAttributes: [.font: subtitleFont, .foregroundColor: UIColor.darkGray])
                 y += 30
 
                 // Summary box
                 let summaryFont = UIFont.systemFont(ofSize: 13)
                 let boldSummaryFont = UIFont.boldSystemFont(ofSize: 13)
-                "Total Collected This Month: ₹\(String(format: "%.2f", totalCollected))".draw(at: CGPoint(x: 40, y: y), withAttributes: [.font: boldSummaryFont])
+                "\(totalsLabel): ₹\(String(format: "%.2f", totalCollected))".draw(at: CGPoint(x: 40, y: y), withAttributes: [.font: boldSummaryFont])
                 y += 18
                 "Total Outstanding Due (all members): ₹\(String(format: "%.2f", totalDue))".draw(at: CGPoint(x: 40, y: y), withAttributes: [.font: boldSummaryFont, .foregroundColor: UIColor.red])
                 y += 30
@@ -77,7 +120,7 @@ enum ReportService {
                 y += 10
 
                 // Rows
-                for payment in monthlyPayments {
+                for payment in payments {
                     if y > pageHeight - 60 {
                         context.beginPage()
                         y = 40
@@ -90,8 +133,8 @@ enum ReportService {
                     y += 20
                 }
 
-                if monthlyPayments.isEmpty {
-                    "No payments recorded for this month.".draw(at: CGPoint(x: 40, y: y), withAttributes: [.font: summaryFont, .foregroundColor: UIColor.gray])
+                if payments.isEmpty {
+                    emptyMessage.draw(at: CGPoint(x: 40, y: y), withAttributes: [.font: summaryFont, .foregroundColor: UIColor.gray])
                 }
             }
             return url
