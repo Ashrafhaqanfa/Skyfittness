@@ -61,6 +61,8 @@ final class MemberService: ObservableObject {
     var liveMembers: [Member] { members.filter { $0.status == .live && !$0.isExpired } }
     var totalMembersCount: Int { members.count }
     var expiredMembers: [Member] { members.filter { $0.isExpired } }
+    var demoMembers: [Member] { members.filter { $0.status == .demo } }
+    var totalDueAmount: Double { members.reduce(0) { $0 + $1.dueAmount } }
 
     func members(in bucket: Member.ExpiryBucket) -> [Member] {
         members.filter { $0.expiryBucket == bucket }
