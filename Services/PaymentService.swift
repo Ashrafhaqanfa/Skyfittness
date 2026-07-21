@@ -78,4 +78,16 @@ final class PaymentService: ObservableObject {
     func payments(for memberId: String) -> [Payment] {
         payments.filter { $0.memberId == memberId }
     }
+
+    /// All payments recorded on a specific calendar day (matches "view payments date-wise").
+    func payments(on date: Date) -> [Payment] {
+        let cal = Calendar.current
+        return payments
+            .filter { cal.isDate($0.paymentDate, inSameDayAs: date) }
+            .sorted { $0.paymentDate > $1.paymentDate }
+    }
+
+    func totalCollection(on date: Date) -> Double {
+        payments(on: date).reduce(0) { $0 + $1.amount }
+    }
 }
