@@ -30,6 +30,35 @@ struct Member: Identifiable, Codable, Equatable {
     var createdAt: Date = Date()
     var updatedAt: Date = Date()
 
+    // MARK: - Extra profile fields (added to match the "Add Member" reference design)
+    // All optional/defaulted so older Firestore documents without these keys still decode fine.
+    var memberCode: String?              // human-friendly "Member ID" shown at the top of the form
+    var address: String?
+    var gender: Gender?
+    var dialCode: String = "+91"
+    var goal: String?
+    var heightCm: Double?
+    var weightKg: Double?
+    var isVIP: Bool = false
+    var batch: String?
+    var marriageAnniversary: Date?
+    var homePhone: String?
+    var careOf: String?
+    var uniqueIdNumber: String?
+    var companyName: String?
+    var companyGST: String?
+    var remark: String?
+    var enrollmentFee: Double = 0
+    var discountType: String?
+    var discountAmount: Double = 0
+    var taxAmount: Double = 0
+    var paidAmount: Double = 0
+    var dueAmountReminderDate: Date?
+
+    enum Gender: String, Codable, CaseIterable {
+        case male, female
+    }
+
     // MARK: - Derived status logic (matches your notes: 1-3 / 4-7 / 8-15 day buckets)
 
     /// Days remaining until expiry. Negative if already expired.
