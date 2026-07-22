@@ -39,11 +39,13 @@ final class PaymentService: ObservableObject {
     }
 
     /// Records a payment AND reduces the member's due amount in a single atomic write.
-    func recordPayment(memberId: String, amount: Double, mode: Payment.PaymentMode, collectedBy: String?, currentDueAmount: Double) async throws {
+    /// Returns the saved payment (with its Firestore ID set) so a receipt can be generated right after.
+    @discardableResult
+    func recordPayment(memberId: String, amount: Double, mode: Payment.PaymentMode, collectedBy: String?, currentDueAmount: Double) async throws -> Payment {
         let batch = db.batch()
 
         let paymentRef = db.collection("payments").document()
-        let payment = Payment(memberId: memberId, amount: amount, mode: mode, collectedBy: collectedBy)
+        var payment = Payment(memberId: memberId, amount: amount, mode: mode, collectedBy: collectedBy)
         try batch.setData(from: payment, forDocument: paymentRef)
 
         let memberRef = db.collection("members").document(memberId)
@@ -51,6 +53,9 @@ final class PaymentService: ObservableObject {
         batch.updateData(["dueAmount": newDue, "updatedAt": Date()], forDocument: memberRef)
 
         try await batch.commit()
+
+        payment.id = paymentRef.documentID
+        return payment
     }
 
     // MARK: - Collection calculations (matches "Today's Collection / Total Collection -> Monthly filter")
