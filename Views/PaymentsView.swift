@@ -13,7 +13,7 @@ struct PaymentsView: View {
     @State private var selectedMonth = Calendar.current.component(.month, from: Date())
     @State private var selectedYear = Calendar.current.component(.year, from: Date())
     @State private var selectedDate = Date()
-    @State private var gymName = "My Gym"
+    @AppStorage("gymName") private var gymName = "My Gym"
     @State private var generatedPDFURL: URL?
     @State private var showingShareSheet = false
 
